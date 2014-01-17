@@ -19,8 +19,10 @@
  *                                                                            *
  ******************************************************************************/
 
-#include <gua/guacamole.hpp>
- #include <../plugins/guacamole-physics/include/PhysicalGeometryNode.hpp>
+#include <gua/guacamole.hpp> 
+#include <gua/physics.hpp>
+//#include <../plugins/guacamole-physics/include/PhysicalGeometryNode.hpp>
+//#include <../plugins/guacamole-physics/Physics.hpp>
 
 
 const std::string geometry("data/objects/monkey.obj");
@@ -88,6 +90,7 @@ void setup_scene(gua::SceneGraph& graph,
 
       //auto shape = new gua::physics::BoxShape(1,1,1);
       std::shared_ptr<gua::physics::CollisionShapeNode> csn (new gua::physics::CollisionShapeNode("box"));
+      csn->data.set_shape("box");
 
       auto node = loader.create_geometry_from_file("monkey", geometry, "Stones");
       std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(node);
@@ -98,8 +101,10 @@ void setup_scene(gua::SceneGraph& graph,
       auto monkey = root_monkey->add_child(monkey_geometry);
       monkey->scale(0.5, 0.5, 0.5);
       monkey->translate(direction[0], direction[1], direction[2]);
-
-      //phys_node->make_collidable(true);
+      std::cout<<"hallo"<<std::endl;
+      std::cout<<phys_node->get_parent()->get_name()<<std::endl;
+      std::cout<<"tschüüsss"<<std::endl;
+      phys_node->make_collidable(true);
 
       setup_scene(graph, monkey, depth_count - 1,physics);
     }
