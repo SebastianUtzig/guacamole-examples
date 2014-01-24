@@ -21,8 +21,6 @@
 
 #include <gua/guacamole.hpp> 
 #include <gua/physics.hpp>
-//#include <../plugins/guacamole-physics/include/PhysicalGeometryNode.hpp>
-//#include <../plugins/guacamole-physics/Physics.hpp>
 
 
 const std::string geometry("data/objects/monkey.obj");
@@ -55,6 +53,7 @@ std::vector<std::shared_ptr<gua::TransformNode>> add_lights(gua::SceneGraph& gra
 
     auto light = lights[i]->add_child(std::make_shared<gua::PointLightNode>("light"));
     light->data.set_color(gua::utils::Color3f::random());
+    //light->data.set_color(gua::utils::Color3f(0.1,1.0,0.1));
   }
 
   return lights;
@@ -94,19 +93,17 @@ void setup_scene(gua::SceneGraph& graph,
 
       auto node = loader.create_geometry_from_file("monkey", geometry, "Stones");
       std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(node);
-      auto phys_node = new gua::PhysicalGeometryNode(geom,physics,csn);
+      auto phys_node = new gua::PhysicalNode(geom,physics,csn);
       std::shared_ptr<gua::Node> monkey_geometry(phys_node);
 
 
       auto monkey = root_monkey->add_child(monkey_geometry);
-      monkey->scale(0.5, 0.5, 0.5);
-      monkey->translate(direction[0], direction[1], direction[2]);
-      std::cout<<"hallo"<<std::endl;
-      std::cout<<phys_node->get_parent()->get_name()<<std::endl;
-      std::cout<<"tschüüsss"<<std::endl;
+      node->scale(0.5, 0.5, 0.5);
+      node->translate(direction[0], direction[1], direction[2]);
+      
       phys_node->make_collidable(true);
 
-      setup_scene(graph, monkey, depth_count - 1,physics);
+      setup_scene(graph, node, depth_count - 1,physics);
     }
   }
 }
@@ -121,9 +118,11 @@ int main(int argc, char** argv) {
 
   //setup physics
   gua::physics::Physics physics;
-  physics.get_bullet_dynamics_world()->setGravity(btVector3(0,-9.81f,0));
+  physics.get_bullet_dynamics_world()->setGravity(btVector3(0,-0.10f,0));
 
-  gua::physics::CollisionShapeDatabase::add_shape("box", new gua::physics::BoxShape(1.0,1.0,1.0));
+  gua::physics::CollisionShapeDatabase::add_shape("box", new gua::physics::BoxShape(0.25f,0.25f,0.25f));
+  gua::physics::CollisionShapeDatabase::add_shape("box2", new gua::physics::BoxShape(0.5f,0.5f,0.5f));
+  //gua::physics::CollisionShapeDatabase::add_shape("box2", new gua::physics::PlaneShape(0.0f,1.0f,0.0f,2.0f));
 
 
   // setup scene
@@ -131,14 +130,30 @@ int main(int argc, char** argv) {
 
   gua::GeometryLoader loader;
 
-  auto monkey_geometry(loader.create_geometry_from_file(
+  /*auto monkey_geometry(loader.create_geometry_from_file(
     "root_ape",
     geometry,
     "Stones"
   ));
 
   auto root_monkey = graph.add_node("/", monkey_geometry);
+  root_monkey->scale(0.5, 0.5, 0.5);*/
+
+  std::shared_ptr<gua::physics::CollisionShapeNode> csn (new gua::physics::CollisionShapeNode("box2"));
+  csn->data.set_shape("box2");
+
+  auto root_monkey = loader.create_geometry_from_file("monkey", geometry, "Stones");
+  std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(root_monkey);
+  //geom->data.set_geometry("");
+  auto phys_node = new gua::PhysicalNode(geom,&physics,csn,0.0f);//-> mass 0.0 => static
+  std::shared_ptr<gua::Node> monkey_geometry(phys_node);
+
+
+  auto monkey = graph.add_node("/",monkey_geometry);
   root_monkey->scale(0.5, 0.5, 0.5);
+  root_monkey->scale(1.0, 1.0, 1.0);
+  
+  phys_node->make_collidable(true);
 
   // depth    monkey    cube          car
   // 1        14.084      56    3.619.000 Vertices  /      7 draw calls
@@ -147,7 +162,7 @@ int main(int argc, char** argv) {
   // 4     2.609.564  10.376              Vertices  /  1.297 draw calls
   // 5    15.647.324  62.216              Vertices  /  7.777 draw calls
   // 6    93.873.884 373.256              Vertices  / 46.657 draw calls
-  setup_scene(graph, root_monkey, 4,&physics);
+  setup_scene(graph, root_monkey, 3,&physics);
 
   auto lights = add_lights(graph, 50);
 
@@ -207,12 +222,13 @@ int main(int argc, char** argv) {
     time += frame_time;
     timer.reset();
 
-    std::function<void (std::shared_ptr<gua::Node>, int)> rotate;
+    /*std::function<void (std::shared_ptr<gua::Node>, int)> rotate;
     rotate = [&](std::shared_ptr<gua::Node> node, int depth) {
       node->rotate(frame_time * (1+depth) * 0.5, 1, 1, 0);
       for (auto child: node->get_children()) {
         rotate(child, ++depth);
       }
+
     };
 
     rotate(graph["/root_ape"], 1);
@@ -222,12 +238,13 @@ int main(int argc, char** argv) {
           std::sin(time * (i * 0.1 + 0.5)) * frame_time * 2.5, 0, 1, 0);
     }
 
-    graph["/root_ape"]->rotate(15 * frame_time, 0, 1, 0);
+    graph["/root_ape"]->rotate(15 * frame_time, 0, 1, 0);*/
     //graph["/screen"]->rotate(20*frame_time, 0, 1, 0);
 
+    physics.synchronize(true);
     renderer.queue_draw({&graph});
   });
-
+  
   loop.start();
 
   return 0;
