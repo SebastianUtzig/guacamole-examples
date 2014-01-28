@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 
   //setup physics
   gua::physics::Physics physics;
-  physics.get_bullet_dynamics_world()->setGravity(btVector3(0,-0.10f,0));
+  physics.get_bullet_dynamics_world()->setGravity(btVector3(0,-9.81f,0));
 
   /*gua::physics::CollisionShapeDatabase::add_shape("box", new gua::physics::BoxShape(2.0f,2.0f,2.0f));
   gua::physics::CollisionShapeDatabase::add_shape("box2", new gua::physics::BoxShape(4.0f,4.0f,4.0f));*/
@@ -48,10 +48,10 @@ int main(int argc, char** argv) {
 
   auto cs = gua::physics::TriangleMeshShape::FromGeometryFile("data/objects/teapot.obj", true, true, gua::GeometryLoader::OPTIMIZE_GEOMETRY);
   //auto cs = gua::physics::ConvexHullShape::FromGeometryFile("data/objects/teapot.obj",true);
-  //cs->set_scaling(gua::math::vec3(0.5,0.5,0.5));
+  cs->set_scaling(gua::math::vec3(1.5,1.5,1.5));
   gua::physics::CollisionShapeDatabase::add_shape("teapot", cs);
   gua::physics::CollisionShapeDatabase::add_shape("sphere", new gua::physics::SphereShape(0.1f));
-  gua::physics::CollisionShapeDatabase::add_shape("sphere2", new gua::physics::SphereShape(1.0f));
+  gua::physics::CollisionShapeDatabase::add_shape("sphere2", new gua::physics::SphereShape(0.05f));
 
 
   // setup scene
@@ -66,12 +66,12 @@ int main(int argc, char** argv) {
   auto root_teapot = loader.create_geometry_from_file("teapot_geom", "data/objects/teapot.obj", "Red");
   std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(root_teapot);
   //geom->data.set_geometry("");
-  auto phys_node = new gua::PhysicalNode(geom,&physics,csn,0.0f);//-> mass 0.0 => static
+  auto phys_node = new gua::PhysicalNode(geom,&physics,nullptr,0.0f);//-> mass 0.0 => static
   std::shared_ptr<gua::Node> teapot_geometry(phys_node);
 
 
   auto teapot = graph.add_node("/",teapot_geometry);
-  //root_teapot->scale(0.5, 0.5, 0.5);
+  root_teapot->scale(1.5, 1.5, 1.5);
   root_teapot->translate(0.0f, 0.0f, -10.0f);
   
   phys_node->make_collidable(true);
