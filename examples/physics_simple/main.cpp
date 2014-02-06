@@ -48,9 +48,9 @@ int main(int argc, char** argv) {
 
   auto cs = gua::physics::TriangleMeshShape::FromGeometryFile("data/objects/teapot.obj", true, true, gua::GeometryLoader::OPTIMIZE_GEOMETRY);
   //auto cs = gua::physics::ConvexHullShape::FromGeometryFile("data/objects/teapot.obj",true);
-  cs->set_scaling(gua::math::vec3(1.5,1.5,1.5));
+  //cs->set_scaling(gua::math::vec3(0.5,0.5,0.5));
   gua::physics::CollisionShapeDatabase::add_shape("teapot", cs);
-  gua::physics::CollisionShapeDatabase::add_shape("sphere", new gua::physics::SphereShape(0.1f));
+  gua::physics::CollisionShapeDatabase::add_shape("sphere", new gua::physics::SphereShape(0.5f));
   gua::physics::CollisionShapeDatabase::add_shape("sphere2", new gua::physics::SphereShape(0.05f));
 
 
@@ -71,8 +71,15 @@ int main(int argc, char** argv) {
 
 
   auto teapot = graph.add_node("/",teapot_geometry);
+  
+  
+  
   root_teapot->scale(1.5, 1.5, 1.5);
+  root_teapot->rotate(180.0f,0.0f,1.0f,0.0f);
   root_teapot->translate(0.0f, 0.0f, -10.0f);
+
+  
+
   
   phys_node->make_collidable(true);
 
@@ -164,16 +171,20 @@ int main(int argc, char** argv) {
       std::shared_ptr<gua::physics::CollisionShapeNode> csn2 (new gua::physics::CollisionShapeNode("sphere"));
       csn2->data.set_shape("sphere");
 
-      auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/sphere.obj", "Red");
+      //auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/sphere.obj", "Red");
+      auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/teapot.obj", "Red");
       std::shared_ptr<gua::GeometryNode> geom2 = std::dynamic_pointer_cast<gua::GeometryNode>(sphere);
       //geom2->data.set_geometry("");
-      auto phys_node2 = new gua::PhysicalNode(geom2,&physics,csn2);//-> mass 0.0 => static
+      //auto phys_node2 = new gua::PhysicalNode(geom2,&physics,csn2);
+      auto phys_node2 = new gua::PhysicalNode(geom2,&physics,nullptr);
       std::shared_ptr<gua::Node> ball_geometry(phys_node2);
 
 
       graph.add_node("/",ball_geometry);
-      sphere->scale(0.1, 0.1, 0.1);
+      
+      sphere->scale(0.5, 0.5, 0.5);
       //sphere->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
+      sphere->rotate(90.0f,0.0f,1.0f,0.0f);
       sphere->translate(sin(timer2.get_elapsed()) * 0.6f, 5.0f, -10.0f);
 
       phys_node2->make_collidable(true);

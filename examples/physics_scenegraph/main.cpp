@@ -103,8 +103,8 @@ void setup_scene(gua::SceneGraph& graph,
       node->translate(direction[0], direction[1], direction[2]-2);
       
       //if(depth_count==3){
-        group_nodes.push_back(phys_node);
-        //phys_node->make_collidable(true);
+        //group_nodes.push_back(phys_node);
+        phys_node->make_collidable(true);
       //}
 
       setup_scene(graph, node, depth_count - 1,physics,group_nodes);
@@ -167,7 +167,7 @@ int main(int argc, char** argv) {
   // 5    15.647.324  62.216              Vertices  /  7.777 draw calls
   // 6    93.873.884 373.256              Vertices  / 46.657 draw calls
   std::list<gua::PhysicalNode*> group_nodes = std::list<gua::PhysicalNode*>();
-  setup_scene(graph, root_monkey, 4,&physics,group_nodes);
+  setup_scene(graph, root_monkey, 2,&physics,group_nodes);
 
   for(auto node : group_nodes){
     node->make_collidable(true);
