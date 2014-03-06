@@ -182,10 +182,11 @@ int main(int argc, char** argv) {
 
       graph.add_node("/",ball_geometry);
       
-      sphere->scale(0.8, 0.8, 0.8);
+      sphere->scale(0.5, 0.5, 0.5);
       //sphere->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
       //sphere->rotate(90.0f,0.0f,1.0f,0.0f);
-      sphere->translate(sin(timer2.get_elapsed()) * 0.6f, 5.0f, -10.0f);
+//      sphere->translate(sin(timer2.get_elapsed()) * 0.6f, 5.0f, -10.0f);
+      sphere->translate(0.0f, 5.0f, -10.0f);
 
       phys_node2->make_collidable(true);
 
@@ -209,10 +210,10 @@ int main(int argc, char** argv) {
 
       sphere->add_child(ball_geometry3);
       
-      //sphere3->scale(0.8, 0.8, 0.8);
+      sphere3->scale(0.5, 0.5, 0.5);
       //sphere3->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
       //sphere3->rotate(90.0f,0.0f,1.0f,0.0f);
-      sphere3->translate(4.0f, 0.0f,0.0f);
+      sphere3->translate(5.0f,0.0f,0.0f);
 
       phys_node3->make_collidable(true);
 
@@ -239,9 +240,9 @@ int main(int argc, char** argv) {
       //sphere4->scale(0.8, 0.8, 0.8);
       //sphere4->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
       //sphere4->rotate(90.0f,0.0f,1.0f,0.0f);
-      sphere4->translate(-4.0f, 0.0f,0.0f);
+      sphere4->translate(-20.0f, 0.0f,0.0f);//20 because of 0.5 scale in combination with upper node's translation
 
-      //phys_node4->make_collidable(true);
+      phys_node4->make_collidable(true);
 
     }
 
