@@ -6,8 +6,8 @@ PROJECT(GUACAMOLE-EXAMPLES CXX)
 
 # version number
 set(GUACAMOLE_MAJOR 0)
-set(GUACAMOLE_MINOR 1)
-set(GUACAMOLE_PATCH 0)
+set(GUACAMOLE_MINOR 4)
+set(GUACAMOLE_PATCH 1)
 set(GUACAMOLE_VERSION ${GUACAMOLE_MAJOR}.${GUACAMOLE_MINOR}.${GUACAMOLE_PATCH})
 set(GUACAMOLE_DESCRIPTION "GUACAMOLE - an astonishing virtual reality engine")
 set(GUACAMOLE_HOMEPAGE "http://www.GUACAMOLE.org")
@@ -45,7 +45,6 @@ elseif (WIN32)
 endif (UNIX)
 
 include(find_json)
-include(find_cuda)
 
 set(LIB_PATH
     ${SCHISM_LIBRARY_DIRS}

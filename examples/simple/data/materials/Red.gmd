@@ -1,7 +1,7 @@
 
 {
 	"shading_model" : "SimplePhong",
-	"uniforms" :
+	"uniforms" : 
 	{
 		"diffuse_color" : "(1.000  0.000  0.000)",
 		"emit" : "0.2",

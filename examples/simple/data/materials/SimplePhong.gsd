@@ -2,7 +2,7 @@
 {
 	"final_shading_stage" : 
 	{
-		"body" : "gua_color = ((emit + (1.0 - emit) * diffuse) * diffuse_color + specular);\n",
+		"body" : "gua_color = ((emit + (1.0 - emit) * diffuse) * diffuse_color + specular);\ngua_color = vec3(1.0, 0.0, 0.0);",
 		"functions" : "",
 		"outputs" : null,
 		"uniforms" : 
