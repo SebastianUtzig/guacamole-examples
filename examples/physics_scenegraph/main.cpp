@@ -94,6 +94,14 @@ void setup_scene(gua::SceneGraph& graph,
 
       auto node = loader.create_geometry_from_file("monkey", geometry, "Red");
       std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(node);
+
+
+      /*float mass = 0.0f;
+      if (depth_count < 3){
+        mass = 0.5f;
+      }*/
+
+
       auto phys_node = new gua::PhysicalNode(geom,physics,nullptr);
       std::shared_ptr<gua::Node> monkey_geometry(phys_node);
 
@@ -102,10 +110,10 @@ void setup_scene(gua::SceneGraph& graph,
       node->scale(0.5, 0.5, 0.5);
       node->translate(direction[0], direction[1], direction[2]);
       
-      //if(depth_count==3){
-        //group_nodes.push_back(phys_node);
-        phys_node->make_collidable(true);
-      //}
+      if(depth_count>=3){
+        group_nodes.push_back(phys_node);
+        //phys_node->make_collidable(true);
+      }
 
       setup_scene(graph, node, depth_count - 1,physics,group_nodes);
     }
@@ -167,12 +175,12 @@ int main(int argc, char** argv) {
   // 5    15.647.324  62.216              Vertices  /  7.777 draw calls
   // 6    93.873.884 373.256              Vertices  / 46.657 draw calls
   std::list<gua::PhysicalNode*> group_nodes = std::list<gua::PhysicalNode*>();
-  setup_scene(graph, root_monkey, 3,&physics,group_nodes);
+  setup_scene(graph, root_monkey, 4,&physics,group_nodes);
   //setup_scene(graph, graph.get_root(), 3,&physics,group_nodes);
 
-/*  for(auto node : group_nodes){
+  for(auto node : group_nodes){
     node->make_collidable(true);
-  }*/
+  }
 
   auto lights = add_lights(graph, 50);
 
