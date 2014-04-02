@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   //auto cs = gua::physics::ConvexHullShape::FromGeometryFile("data/objects/teapot.obj",true);
   //cs->set_scaling(gua::math::vec3(0.5,0.5,0.5));
   gua::physics::CollisionShapeDatabase::add_shape("teapot", cs);
-  gua::physics::CollisionShapeDatabase::add_shape("sphere", new gua::physics::SphereShape(0.3f));
+  gua::physics::CollisionShapeDatabase::add_shape("sphere", new gua::physics::SphereShape(0.5f));
   gua::physics::CollisionShapeDatabase::add_shape("sphere2", new gua::physics::SphereShape(0.05f));
 
 
@@ -59,29 +59,57 @@ int main(int argc, char** argv) {
 
   gua::GeometryLoader loader;
 
+  //gua::PhysicalGeometryLoader phys_loader;
+  auto phys_loader = gua::PhysicalGeometryLoader(&physics);
 
-  std::shared_ptr<gua::physics::CollisionShapeNode> csn (new gua::physics::CollisionShapeNode("teapot"));
+
+ /* std::shared_ptr<gua::physics::CollisionShapeNode> csn (new gua::physics::CollisionShapeNode("teapot"));
   csn->data.set_shape("teapot");
 
   auto root_teapot = loader.create_geometry_from_file("teapot_geom", "data/objects/teapot.obj", "Red");
   std::shared_ptr<gua::GeometryNode> geom = std::dynamic_pointer_cast<gua::GeometryNode>(root_teapot);
   //geom->data.set_geometry("");
   auto phys_node = new gua::PhysicalNode(geom,&physics,nullptr,0.0f);//-> mass 0.0 => static
-  std::shared_ptr<gua::Node> teapot_geometry(phys_node);
-
-
-  auto teapot = graph.add_node("/",teapot_geometry);
-  
-  
-  
-  root_teapot->scale(1.5, 1.5, 1.5);
-  root_teapot->rotate(180.0f,0.0f,1.0f,0.0f);
-  root_teapot->translate(0.0f, 0.0f, -10.0f);
+  std::shared_ptr<gua::Node> teapot_geometry(phys_node);*/
 
   
+  //auto phys_node0 = phys_loader.create_physical_objects_from_file("oilrig_geom", "/opt/3d_models/OIL_RIG_GUACAMOLE/oilrig.obj", "Red",true);
+  auto phys_node0 = phys_loader.create_physical_objects_from_file("funny_geom", "data/objects/funny.obj", "Red",0.0,nullptr);
 
+  //auto phys_node_shared0 = std::dynamic_pointer_cast<gua::PhysicalNode>(phys_node0);
+
+  //phys_node_shared0->set_mass(1.0);
+
+  //phys_node_shared0->simulate(true);
   
-  phys_node->make_collidable(true);
+  //phys_node_shared0->set_mass(0.0);
+  
+  graph.add_node("/",phys_node0);
+  
+//  phys_node0->scale(0.01, 0.01, 0.01);
+  //phys_node0->scale(1.5, 1.5,1.5);
+//  phys_node0->rotate(180.0f,0.0f,1.0f,0.0f);
+  phys_node0->translate(0.0f, 0.0f, -10.0f);
+  phys_node0->simulate(true);
+
+
+  //static no2
+  auto phys_node01 = phys_loader.create_physical_objects_from_file("funny_geom", "data/objects/funny.obj", "Red",0.0,nullptr);
+  graph.add_node("/",phys_node01);
+  //phys_node0->add_child(phys_node01);
+  phys_node01->translate(2.5f, 0.0f, -10.0f);
+  phys_node01->simulate(true);
+
+  //static no3
+  auto phys_node02 = phys_loader.create_physical_objects_from_file("funny_geom", "data/objects/funny.obj", "Red",0.0,nullptr);
+  graph.add_node("/",phys_node02);
+  //phys_node01->add_child(phys_node02);
+  phys_node02->translate(-2.5f, 0.0f, -10.0f);
+  phys_node02->simulate(true);
+
+
+
+
 
 
   /*std::shared_ptr<gua::physics::CollisionShapeNode> csn2 (new gua::physics::CollisionShapeNode("sphere2"));
@@ -98,7 +126,7 @@ int main(int argc, char** argv) {
   sphere->scale(1.0f, 1.0f, 1.0f);
   sphere->translate(0.0f,0.0f, -10.0f);
 
-  phys_node2->make_collidable(true);*/
+  phys_node2->simulate(true);*/
 
 
 
@@ -168,27 +196,24 @@ int main(int argc, char** argv) {
       __last_spawn_time = timer2.get_elapsed();
       std::cout<<"spawn ball!!!"<<std::endl;
 
-      std::shared_ptr<gua::physics::CollisionShapeNode> csn2 (new gua::physics::CollisionShapeNode("sphere"));
-      csn2->data.set_shape("sphere");
+      std::list<std::shared_ptr<gua::PhysicalNode>> group_nodes = std::list<std::shared_ptr<gua::PhysicalNode>>();
 
-      //auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/sphere.obj", "Red");
-      auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/monkey.obj", "Red");
-      std::shared_ptr<gua::GeometryNode> geom2 = std::dynamic_pointer_cast<gua::GeometryNode>(sphere);
-      //geom2->data.set_geometry("");
-      //auto phys_node2 = new gua::PhysicalNode(geom2,&physics,csn2);
-      auto phys_node2 = new gua::PhysicalNode(geom2,&physics,nullptr,1.0);
-      std::shared_ptr<gua::Node> ball_geometry(phys_node2);
+/*      std::shared_ptr<gua::physics::CollisionShapeNode> csn2 (new gua::physics::CollisionShapeNode("sphere"));
+      csn2->data.set_shape("sphere");*/
+
+      auto phys_node = phys_loader.create_physical_objects_from_file("sphere_geom", "data/objects/cube.obj", "Red",1.0,nullptr);
 
 
-      graph.add_node("/",ball_geometry);
+      graph.add_node("/",phys_node);
       
-      sphere->scale(0.5, 0.5, 0.5);
-      //sphere->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
-      //sphere->rotate(90.0f,0.0f,1.0f,0.0f);
-//      sphere->translate(sin(timer2.get_elapsed()) * 0.6f, 5.0f, -10.0f);
-      sphere->translate(0.0f, 5.0f, -10.0f);
+      phys_node->scale(0.5, 0.5, 0.5);
 
-      phys_node2->make_collidable(true);
+      //phys_node->rotate(45.0,0,1,0);
+
+      //phys_node->translate(sin(timer2.get_elapsed()) * 0.6f, 7.0f, -10.0f);
+      phys_node->translate(0.0f, 7.0f, -10.0f);
+
+      group_nodes.push_back(phys_node); 
 
 
       ////////////////////////////////////////////////////////////////
@@ -196,26 +221,16 @@ int main(int argc, char** argv) {
       __last_spawn_time = timer2.get_elapsed();
       std::cout<<"spawn ball!!!"<<std::endl;
 
-      std::shared_ptr<gua::physics::CollisionShapeNode> csn3 (new gua::physics::CollisionShapeNode("sphere"));
-      csn3->data.set_shape("sphere");
+/*      std::shared_ptr<gua::physics::CollisionShapeNode> csn3 (new gua::physics::CollisionShapeNode("sphere"));
+      csn3->data.set_shape("sphere");*/
 
-      //auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/sphere.obj", "Red");
-      auto sphere3 = loader.create_geometry_from_file("sphere3_geom", "data/objects/monkey.obj", "Red");
-      std::shared_ptr<gua::GeometryNode> geom3 = std::dynamic_pointer_cast<gua::GeometryNode>(sphere3);
-      //geom3->data.set_geometry("");
-      //auto phys_node2 = new gua::PhysicalNode(geom3,&physics,csn3);
-      auto phys_node3 = new gua::PhysicalNode(geom3,&physics,nullptr,1.0);
-      std::shared_ptr<gua::Node> ball_geometry3(phys_node3);
+      auto phys_node2 = phys_loader.create_physical_objects_from_file("sphere_geom2", "data/objects/cube.obj", "Red",1.0,nullptr);
 
-
-      sphere->add_child(ball_geometry3);
+      //phys_node->get_children()[0]->add_child(phys_node2);
+      phys_node->add_child(phys_node2);
       
-      sphere3->scale(0.5, 0.5, 0.5);
-      //sphere3->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
-      //sphere3->rotate(90.0f,0.0f,1.0f,0.0f);
-      sphere3->translate(5.0f,0.0f,0.0f);
-
-      phys_node3->make_collidable(true);
+      phys_node2->translate(5.0f,-5.0f,0.0f);
+      group_nodes.push_back(phys_node2);
 
       /////////////////////////////////////////////////////////////////
 
@@ -223,26 +238,22 @@ int main(int argc, char** argv) {
       __last_spawn_time = timer2.get_elapsed();
       std::cout<<"spawn ball!!!"<<std::endl;
 
-      std::shared_ptr<gua::physics::CollisionShapeNode> csn4 (new gua::physics::CollisionShapeNode("sphere"));
-      csn4->data.set_shape("sphere");
+ /*     std::shared_ptr<gua::physics::CollisionShapeNode> csn4 (new gua::physics::CollisionShapeNode("sphere"));
+      csn4->data.set_shape("sphere");*/
 
-      //auto sphere = loader.create_geometry_from_file("sphere_geom", "data/objects/sphere.obj", "Red");
-      auto sphere4 = loader.create_geometry_from_file("sphere4_geom", "data/objects/monkey.obj", "Red");
-      std::shared_ptr<gua::GeometryNode> geom4 = std::dynamic_pointer_cast<gua::GeometryNode>(sphere4);
-      //geom4->data.set_geometry("");
-      //auto phys_node2 = new gua::PhysicalNode(geom4,&physics,csn4);
-      auto phys_node4 = new gua::PhysicalNode(geom4,&physics,nullptr,1.0);
-      std::shared_ptr<gua::Node> ball_geometry4(phys_node4);
+      auto phys_node3 = phys_loader.create_physical_objects_from_file("sphere_geom3", "data/objects/cube.obj", "Red",1.0,nullptr);
+
+      //phys_node2->get_children()[0]->add_child(phys_node3);
+      phys_node2->add_child(phys_node3);
+
+      group_nodes.push_back(phys_node3);
+
+      phys_node3->translate(-10.0f, 0.0f,0.0f);
 
 
-      sphere3->add_child(ball_geometry4);
-      
-      //sphere4->scale(0.8, 0.8, 0.8);
-      //sphere4->translate(sin(timer2.get_elapsed()) * 0.3f, 2.0f, 0.0f);
-      //sphere4->rotate(90.0f,0.0f,1.0f,0.0f);
-      sphere4->translate(-20.0f, 0.0f,0.0f);//20 because of 0.5 scale in combination with upper node's translation
-
-      phys_node4->make_collidable(true);
+      for(auto node : group_nodes){
+        node->simulate(true);
+      }
 
     }
 
